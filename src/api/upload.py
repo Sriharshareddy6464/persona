@@ -1,7 +1,9 @@
 from fastapi import APIRouter, UploadFile, File
 from datetime import datetime
 from src.services.pdf_service import extract_pdf_text
+from src.services.chunk_service import create_chunks
 import os
+
 
 router = APIRouter()
 
@@ -18,20 +20,21 @@ async def upload_pdf(
     file: UploadFile = File(...)
 ):
 
-    # validate file type
+    # file validation
 
     if not file.filename.lower().endswith(".pdf"):
 
         return {
 
             "success": False,
+
             "message": "Only PDF files allowed"
 
         }
 
     try:
 
-        # generate unique filename
+        # create unique filename
 
         timestamp = datetime.now().strftime(
             "%Y%m%d_%H%M%S"
@@ -46,7 +49,7 @@ async def upload_pdf(
             filename
         )
 
-        # save uploaded pdf
+        # save uploaded file
 
         with open(
             filepath,
@@ -57,7 +60,7 @@ async def upload_pdf(
 
             f.write(content)
 
-        # extract pdf content
+        # extract pdf text
 
         pdf_data = extract_pdf_text(
             filepath
@@ -71,26 +74,60 @@ async def upload_pdf(
 
                 "message": "PDF extraction failed",
 
-                "error": pdf_data["error"]
+                "error":
+                pdf_data["error"]
 
             }
 
-        # response
+        # chunk metadata
+
+        metadata = {
+
+            "filename":
+            file.filename,
+
+            "pages":
+            pdf_data["pages"]
+
+        }
+
+        # generate chunks
+
+        chunks = create_chunks(
+
+            pdf_data["text"],
+            metadata
+
+        )
+
+        # final response
 
         return {
 
             "success": True,
 
-            "filename": file.filename,
+            "filename":
+            file.filename,
 
-            "saved_as": filepath,
+            "saved_as":
+            filepath,
 
-            "pages": pdf_data["pages"],
+            "pages":
+            pdf_data["pages"],
 
-            "characters": pdf_data["characters"],
+            "characters":
+            pdf_data["characters"],
 
-            "preview":
-            pdf_data["text"][:500]
+            "chunks":
+            len(chunks),
+
+            "sample_chunk":
+
+            chunks[0]["content"][:300]
+
+            if len(chunks) > 0
+
+            else None
 
         }
 
