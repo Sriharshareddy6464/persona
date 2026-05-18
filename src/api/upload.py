@@ -2,6 +2,7 @@ from fastapi import APIRouter, UploadFile, File
 from datetime import datetime
 from src.services.pdf_service import extract_pdf_text
 from src.services.chunk_service import create_chunks
+from src.services.embedding_service import generate_embeddings
 import os
 
 
@@ -99,6 +100,10 @@ async def upload_pdf(
             metadata
 
         )
+        
+        sample_vector = generate_embeddings(
+            chunks[0]["content"]
+        ) if len(chunks) > 0 else None
 
         # final response
 
@@ -120,6 +125,12 @@ async def upload_pdf(
 
             "chunks":
             len(chunks),
+            
+            "embedding_dimension":
+            len(sample_vector),
+
+            "embedding_preview":
+            sample_vector[:5] if sample_vector is not None else None,
 
             "sample_chunk":
 
