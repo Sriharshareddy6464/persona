@@ -6,7 +6,7 @@ def extract_pdf_text(file_path: str):
 
         reader = PdfReader(file_path)
 
-        pages=len(reader.pages)
+        page_count=len(reader.pages)
 
         text=[]
 
@@ -19,10 +19,10 @@ def extract_pdf_text(file_path: str):
 
         final_text="\n".join(text)
 
-        return {
+        return{
 
             "success":True,
-            "pages":pages,
+            "pages":page_count,
             "characters":len(final_text),
             "text":final_text
 
@@ -30,7 +30,7 @@ def extract_pdf_text(file_path: str):
 
     except Exception as e:
 
-        return {
+        return{
 
             "success":False,
             "error":str(e)

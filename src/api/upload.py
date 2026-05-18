@@ -1,44 +1,107 @@
 from fastapi import APIRouter, UploadFile, File
-import os
 from datetime import datetime
+from src.services.pdf_service import extract_pdf_text
+import os
 
 router = APIRouter()
 
-UPLOAD_DIR="uploads"
+UPLOAD_DIR = "uploads"
 
-os.makedirs(UPLOAD_DIR,exist_ok=True)
+os.makedirs(
+    UPLOAD_DIR,
+    exist_ok=True
+)
 
 
 @router.post("/upload")
-
 async def upload_pdf(
-        file:UploadFile=File(...)
+    file: UploadFile = File(...)
 ):
 
-    if not file.filename.endswith(".pdf"):
+    # validate file type
+
+    if not file.filename.lower().endswith(".pdf"):
 
         return {
 
-            "success":False,
-            "message":"Only PDF files allowed"
+            "success": False,
+            "message": "Only PDF files allowed"
 
         }
 
-    timestamp=datetime.now().strftime(
-        "%Y%m%d_%H%M%S"
-    )
+    try:
 
-    filepath=f"{UPLOAD_DIR}/{timestamp}_{file.filename}"
+        # generate unique filename
 
-    with open(filepath,"wb") as f:
+        timestamp = datetime.now().strftime(
+            "%Y%m%d_%H%M%S"
+        )
 
-        content=await file.read()
+        filename = (
+            f"{timestamp}_{file.filename}"
+        )
 
-        f.write(content)
+        filepath = os.path.join(
+            UPLOAD_DIR,
+            filename
+        )
 
-    return{
+        # save uploaded pdf
 
-        "success":True,
-        "filename":file.filename,
-        "saved_as":filepath
-    }
+        with open(
+            filepath,
+            "wb"
+        ) as f:
+
+            content = await file.read()
+
+            f.write(content)
+
+        # extract pdf content
+
+        pdf_data = extract_pdf_text(
+            filepath
+        )
+
+        if not pdf_data["success"]:
+
+            return {
+
+                "success": False,
+
+                "message": "PDF extraction failed",
+
+                "error": pdf_data["error"]
+
+            }
+
+        # response
+
+        return {
+
+            "success": True,
+
+            "filename": file.filename,
+
+            "saved_as": filepath,
+
+            "pages": pdf_data["pages"],
+
+            "characters": pdf_data["characters"],
+
+            "preview":
+            pdf_data["text"][:500]
+
+        }
+
+    except Exception as e:
+
+        return {
+
+            "success": False,
+
+            "message": "Upload failed",
+
+            "error": str(e)
+
+        }
