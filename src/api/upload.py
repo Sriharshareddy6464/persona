@@ -2,7 +2,11 @@ from fastapi import APIRouter, UploadFile, File
 from datetime import datetime
 from src.services.pdf_service import extract_pdf_text
 from src.services.chunk_service import create_chunks
-from src.services.embedding_service import generate_embeddings
+from src.services.embedding_service import (
+    generate_embeddings,
+    generate_batch_embeddings
+)
+from src.services.vector_service import store_chunks
 import os
 
 
@@ -21,7 +25,7 @@ async def upload_pdf(
     file: UploadFile = File(...)
 ):
 
-    # file validation
+    # validate file type
 
     if not file.filename.lower().endswith(".pdf"):
 
@@ -29,7 +33,8 @@ async def upload_pdf(
 
             "success": False,
 
-            "message": "Only PDF files allowed"
+            "message":
+            "Only PDF files allowed"
 
         }
 
@@ -61,7 +66,7 @@ async def upload_pdf(
 
             f.write(content)
 
-        # extract pdf text
+        # extract text
 
         pdf_data = extract_pdf_text(
             filepath
@@ -73,14 +78,15 @@ async def upload_pdf(
 
                 "success": False,
 
-                "message": "PDF extraction failed",
+                "message":
+                "PDF extraction failed",
 
                 "error":
                 pdf_data["error"]
 
             }
 
-        # chunk metadata
+        # metadata
 
         metadata = {
 
@@ -92,7 +98,7 @@ async def upload_pdf(
 
         }
 
-        # generate chunks
+        # chunk generation
 
         chunks = create_chunks(
 
@@ -100,12 +106,42 @@ async def upload_pdf(
             metadata
 
         )
-        
-        sample_vector = generate_embeddings(
-            chunks[0]["content"]
-        ) if len(chunks) > 0 else None
 
-        # final response
+        if len(chunks) == 0:
+
+            return {
+
+                "success": False,
+
+                "message":
+                "No chunks generated"
+
+            }
+
+        # embeddings
+
+        sample_vector = generate_embeddings(
+
+            chunks[0]["content"]
+
+        )
+
+        vectors = generate_batch_embeddings(
+
+            chunks
+
+        )
+
+        # store vectors
+
+        store_chunks(
+
+            chunks,
+            vectors
+
+        )
+
+        # response
 
         return {
 
@@ -125,20 +161,19 @@ async def upload_pdf(
 
             "chunks":
             len(chunks),
-            
+
             "embedding_dimension":
             len(sample_vector),
 
             "embedding_preview":
-            sample_vector[:5] if sample_vector is not None else None,
+            sample_vector[:5],
+
+            "stored_vectors":
+            len(vectors),
 
             "sample_chunk":
 
             chunks[0]["content"][:300]
-
-            if len(chunks) > 0
-
-            else None
 
         }
 
@@ -148,8 +183,10 @@ async def upload_pdf(
 
             "success": False,
 
-            "message": "Upload failed",
+            "message":
+            "Upload failed",
 
-            "error": str(e)
+            "error":
+            str(e)
 
         }

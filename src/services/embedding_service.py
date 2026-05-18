@@ -9,6 +9,9 @@ embedding_model = HuggingFaceEmbeddings(
 )
 
 
+# single embedding
+# used for preview/testing
+
 def generate_embeddings(
         text:str
 ):
@@ -18,3 +21,27 @@ def generate_embeddings(
     )
 
     return vector
+
+
+# batch embeddings
+# used for storage
+
+def generate_batch_embeddings(
+        chunks
+):
+
+    vectors=[]
+
+    for chunk in chunks:
+
+        vector = embedding_model.embed_query(
+
+            chunk["content"]
+
+        )
+
+        vectors.append(
+            vector
+        )
+
+    return vectors
