@@ -4,6 +4,11 @@ from src.services.retrieval_service import (
     retrieve_documents
 )
 
+from src.services.generation_service import (
+    generate_response
+)
+
+
 router=APIRouter()
 
 
@@ -25,16 +30,21 @@ def query_documents(
 
     )
 
+    docs=results["documents"][0]
+
+    answer=generate_response(
+
+        q,
+        docs
+
+    )
+
     return{
 
         "query":q,
 
-        "source":
+        "source":filename,
 
-        filename,
-
-        "results":
-
-        results["documents"][0]
+        "answer":answer
 
     }
