@@ -1,6 +1,6 @@
 # Phase 5 — Retrieval Layer
 
-Status: 🚧 Active
+Status: DONE
 
 Goal:
 

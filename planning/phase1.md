@@ -3,7 +3,7 @@
 Goal:
 Accept PDF files and prepare documents
 
-Status: 🚧 Active
+Status: DONE
 
 ## Tasks
 

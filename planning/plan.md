@@ -1,356 +1,181 @@
-# Persona — Production RAG System
-Status: 🚧 In Development
+# Persona Status Audit
 
-Goal:
-Build a production-oriented retrieval system focused on deployment,
-observability, reliability, and AI infrastructure practices.
+## Phase 0 — Foundation ✅
 
-Architecture V1
+- [x] Repository initialized
+- [x] project structure
+- [x] .gitignore
+- [x] virtual environment
+- [x] requirements
+- [x] README
+- [x] docs folder
+- [x] monitoring folder
+- [x] docker folder
+- [x] tests folder
 
-PDF
-↓
-Chunking
-↓
-Embeddings
-↓
-ChromaDB
-↓
-Retriever
-↓
-FastAPI
-↓
-Response API
+Status:
+Complete
 
 ---
 
-# Phase 0 — Foundation ✅
+## Phase 1 — Data Ingestion ✅
 
-## Repository Setup
+- [x] upload endpoint
+- [x] PDF validation
+- [x] upload folder structure
+- [x] PDF extraction
+- [x] extraction handling
+- [x] metadata
 
-- [x] Initialize repository
-- [x] Create project structure
-- [x] Create .gitignore
-- [x] Create .env.example
-- [x] Setup virtual environment
-- [x] Setup requirements.txt
-- [x] Create README
-- [x] Create docs folder
-- [x] Create monitoring folder
-- [x] Create docker folder
-- [x] Create tests folder
-- [x] Initial commit
+Missing:
 
-Structure:
-
-persona/
-
-src/
-ingestion.py
-retrieval.py
-embeddings.py
-api.py
-config.py
-
-docs/
-monitoring/
-docker/
-tests/
+- [ ] file size validation
+- [ ] structured logging
 
 ---
 
-# Phase 1 — Data Ingestion Pipeline
+## Phase 2 — Chunking ✅
 
-Goal:
-Accept PDF files and prepare documents.
+- [x] Recursive splitter
+- [x] metadata
+- [x] chunk identifiers
+- [x] chunk service
 
-Tasks:
+Optional:
 
-- [ ] Create upload endpoint
-- [ ] Add PDF validation
-- [ ] Add file size limits
-- [ ] Add upload folder structure
-- [ ] Extract PDF text
-- [ ] Handle extraction failures
-- [ ] Add document metadata
-- [ ] Add logging
-
-Test:
-
-- [ ] Upload PDF
-- [ ] Verify extraction
-
-Output:
-
-PDF
-↓
-raw text
+- [ ] chunk experimentation
 
 ---
 
-# Phase 2 — Chunking Pipeline
+## Phase 3 — Embeddings ✅
 
-Goal:
-Split documents efficiently.
+- [x] local embeddings
+- [x] embedding service
+- [x] vector generation
 
-Tasks:
+Missing:
 
-- [ ] Add recursive text splitter
-- [ ] Experiment chunk sizes
-- [ ] Experiment overlap values
-- [ ] Store metadata
-- [ ] Add chunk identifiers
-- [ ] Create chunk service
-
-Test:
-
-- [ ] Verify chunk count
-- [ ] Verify overlap behavior
-
-Output:
-
-raw text
-↓
-chunks
+- [ ] embedding cache
+- [ ] structured logging
 
 ---
 
-# Phase 3 — Embedding Pipeline
+## Phase 4 — Vector DB ✅
 
-Goal:
-Convert chunks into vectors.
+- [x] ChromaDB
+- [x] collections
+- [x] metadata
+- [x] persistence
+- [x] retrieval
 
-Tasks:
-
-- [ ] Install sentence-transformers
-- [ ] Add local embeddings
-- [ ] Configure embedding service
-- [ ] Add embedding cache
-- [ ] Handle failures
-- [ ] Add logging
-
-Model:
-
-all-MiniLM-L6-v2
-
-Test:
-
-- [ ] Generate embeddings
-- [ ] Verify vector dimensions
-
-Output:
-
-chunks
-↓
-embeddings
+Complete
 
 ---
 
-# Phase 4 — Vector Database
+## Phase 5 — Retrieval ✅
 
-Goal:
-Store and retrieve embeddings.
-
-Tasks:
-
-- [ ] Setup ChromaDB
-- [ ] Create collections
-- [ ] Store vectors
-- [ ] Store metadata
-- [ ] Add retrieval service
-- [ ] Add persistence
-
-Test:
-
-- [ ] Query stored vectors
-- [ ] Restart application
-- [ ] Verify persistence
-
-Output:
-
-query
-↓
-retrieved chunks
-
----
-
-# Phase 5 — Retrieval Layer
-
-Goal:
-Create retrieval workflow.
-
-Tasks:
-
-- [ ] Build retriever
-- [ ] Add top-k search
-- [ ] Experiment k values
-- [ ] Add metadata filtering
-- [ ] Add similarity scoring
+- [x] retriever
+- [x] top-k
+- [x] metadata filtering
 
 Future:
 
+- [ ] similarity scores
 - [ ] BM25
-- [ ] Hybrid retrieval
+- [ ] hybrid retrieval
 - [ ] reranking
 
-Test:
+---
 
-- [ ] Verify relevant results
+## Phase 6 — API Layer ⚠️
+
+Completed:
+
+- [x] /upload
+- [x] /query
+
+Missing:
+
+- [ ] /health
+- [ ] request schemas
+- [ ] response schemas
+- [ ] global error handling
 
 ---
 
-# Phase 6 — API Layer
+## Phase 7 — Dockerization ❌
 
-Goal:
-Expose system through FastAPI.
+Missing:
 
-Tasks:
-
-- [ ] Create /upload
-- [ ] Create /query
-- [ ] Create /health
-- [ ] Add request schemas
-- [ ] Add response schemas
-- [ ] Add error handling
-
-Test:
-
-- [ ] Swagger works
-- [ ] Upload works
-- [ ] Query works
+- [ ] Dockerfile
+- [ ] docker compose
+- [ ] env configuration
 
 ---
 
-# Phase 7 — Dockerization
+## Phase 8 — Redis ❌
 
-Goal:
-Containerize system.
+Missing:
 
-Tasks:
-
-- [ ] Create Dockerfile
-- [ ] Create docker-compose
-- [ ] Add environment variables
-- [ ] Verify container startup
-
-Test:
-
-- [ ] docker compose up
+- [ ] Redis
+- [ ] cache layer
+- [ ] TTL
 
 ---
 
-# Phase 8 — Redis Integration
+## Phase 9 — Reliability ❌
 
-Goal:
-Improve performance.
+Missing:
 
-Tasks:
-
-- [ ] Setup Redis
-- [ ] Add response cache
-- [ ] Add query cache
-- [ ] Add TTL
-- [ ] Cache invalidation
-
-Test:
-
-- [ ] Verify cache hits
+- [ ] rate limiting
+- [ ] retry handling
+- [ ] timeout handling
+- [ ] health checks
+- [ ] structured logs
 
 ---
 
-# Phase 9 — Reliability Layer
+## Phase 10 — Observability ❌
 
-Goal:
-Introduce production concepts.
+Missing:
 
-Tasks:
-
-- [ ] Rate limiting
-- [ ] Retry logic
-- [ ] Request timeout
-- [ ] Structured logging
-- [ ] Health checks
-
-Future:
-
-- [ ] Queue support
-- [ ] Dead letter queue
-- [ ] Circuit breakers
+- [ ] Prometheus
+- [ ] Grafana
+- [ ] metrics
 
 ---
 
-# Phase 10 — Observability
+## Phase 11 — CI/CD ❌
 
-Goal:
-Monitor behavior.
+Missing:
 
-Tasks:
-
-- [ ] Prometheus metrics
-- [ ] Grafana dashboards
-- [ ] Request metrics
-- [ ] Latency metrics
-- [ ] Error metrics
-
-Test:
-
-- [ ] Metrics visible
+- [ ] GitHub Actions
+- [ ] test workflows
+- [ ] Docker validation
 
 ---
 
-# Phase 11 — CI/CD
+## Phase 12 — Deployment ❌
 
-Goal:
-Automated workflows.
+Missing:
 
-Tasks:
-
-- [ ] Add GitHub Actions
-- [ ] Run tests
-- [ ] Lint checks
-- [ ] Docker build validation
-
----
-
-# Phase 12 — Deployment
-
-Goal:
-Public deployment
-
-Tasks:
-
-- [ ] EC2 deployment
+- [ ] EC2
 - [ ] Docker deployment
-- [ ] Nginx reverse proxy
+- [ ] Nginx
 - [ ] SSL
-- [ ] Domain setup
 
 ---
 
-# Phase 13 — Documentation
+## Phase 13 — Documentation ⚠️
 
-Tasks:
+Completed:
 
-- [ ] Architecture diagram
-- [ ] Screenshots
+- [x] README
+
+Missing:
+
+- [ ] architecture image
+- [ ] screenshots
 - [ ] API examples
-- [ ] Deployment guide
-- [ ] Lessons learned
-- [ ] Future roadmap
-- [ ] Loom walkthrough
-
----
-
-Ship Rule:
-
-Do not jump phases.
-
-Finish:
-Build
-↓
-Test
-↓
-Commit
-↓
-Document
-
-then move.
+- [ ] deployment guide
+- [ ] Loom demo

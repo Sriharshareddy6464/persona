@@ -1,5 +1,7 @@
 # Phase 6 — Response Generation Layer
 
+Status: DONE
+
 Goal:
 
 Convert retrieved chunks into useful answers.

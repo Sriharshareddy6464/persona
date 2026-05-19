@@ -1,6 +1,6 @@
 # Phase 3 — Embedding Pipeline
 
-Status: 🚧 Active
+Status: DONE
 
 Goal:
 

@@ -1,6 +1,6 @@
 # Phase 2 — Chunking Pipeline
 
-Status: 🚧 Active
+Status: DONE
 
 Goal:
 
