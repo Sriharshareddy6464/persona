@@ -1,49 +1,56 @@
-import chromadb
-
 from src.services.embedding_service import (
     generate_embeddings
 )
 
-client=chromadb.PersistentClient(
-    path="./chroma_db"
-)
-
-collection=client.get_collection(
-    "persona_documents"
+from src.services.vector_service import (
+    collection
 )
 
 
-def retrieve_documents(
-        query:str,
-        filename:str=None,
-        top_k:int=5
+def retrieve_chunks(
+        query: str,
+        filename: str = None,
+        top_k: int = 5
 ):
 
-    query_embedding=generate_embeddings(
+    query_embedding = generate_embeddings(
         query
     )
 
-    query_args={
-
-        "query_embeddings":[
-            query_embedding
-        ],
-
-        "n_results":top_k
-
-    }
-
     if filename:
 
-        query_args["where"]={
+        results = collection.query(
 
-            "filename":
-            filename
+            query_embeddings=[
+                query_embedding
+            ],
 
-        }
+            n_results=top_k,
 
-    results=collection.query(
-        **query_args
-    )
+            where={
 
-    return results
+                "filename":
+                filename
+
+            }
+
+        )
+
+    else:
+
+        results = collection.query(
+
+            query_embeddings=[
+                query_embedding
+            ],
+
+            n_results=top_k
+
+        )
+
+    documents = results.get(
+        "documents",
+        [[]]
+    )[0]
+
+    return documents

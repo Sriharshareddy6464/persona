@@ -1,50 +1,90 @@
 from fastapi import APIRouter
+from src.services.retrieval_service import retrieve_chunks
+from src.services.llm_service import generate_response
+from src.core.session_store import get_active_resume
 
-from src.services.retrieval_service import (
-    retrieve_documents
-)
-
-from src.services.generation_service import (
-    generate_response
-)
-
-
-router=APIRouter()
+router = APIRouter()
 
 
 @router.get("/query")
-
-def query_documents(
-
-        q:str,
-
-        filename:str=None
-
+async def query_documents(
+        q: str
 ):
 
-    results=retrieve_documents(
+    active_resume = get_active_resume()
+
+    if active_resume is None:
+
+        return {
+
+            "success": False,
+
+            "message":
+            "No resume uploaded"
+
+        }
+
+    results = retrieve_chunks(
 
         query=q,
 
-        filename=filename
+        filename=active_resume
 
     )
 
-    docs=results["documents"][0]
+    context = "\n".join(results)
 
-    answer=generate_response(
+    if len(context.strip()) == 0:
 
-        q,
-        docs
+        return {
 
+            "query": q,
+
+            "active_resume":
+            active_resume,
+
+            "answer":
+            "No matching information found"
+
+        }
+
+    prompt = f"""
+
+You are a resume assistant.
+
+Answer ONLY using provided context.
+
+If answer does not exist say:
+
+Information not available in resume.
+
+
+Context:
+
+{context}
+
+
+Question:
+
+{q}
+
+
+Answer:
+
+"""
+
+    answer = generate_response(
+        prompt
     )
 
-    return{
+    return {
 
-        "query":q,
+        "query": q,
 
-        "source":filename,
+        "active_resume":
+        active_resume,
 
-        "answer":answer
+        "answer":
+        answer
 
     }
